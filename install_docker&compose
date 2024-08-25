@@ -1,0 +1,44 @@
+#!/bin/bash
+# Script to install Docker and Docker Compose on Rocky Linux
+# Update the system
+echo "Updating the system..."
+sudo dnf update -y
+
+# Install necessary packages
+echo "Installing necessary packages..."
+sudo dnf install -y dnf-plugins-core
+
+# Add the Docker repository
+echo "Adding Docker repository..."
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+# Install Docker
+echo "Installing Docker..."
+sudo dnf install -y docker-ce docker-ce-cli containerd.io
+
+# Start and enable Docker
+echo "Starting and enabling Docker..."
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Add current user to Docker group (optional)
+echo "Adding current user to Docker group..."
+sudo usermod -aG docker $USER
+
+# Install Docker Compose
+echo "Installing Docker Compose..."
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+# Make Docker Compose executable
+echo "Making Docker Compose executable..."
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Verify installations
+echo "Verifying Docker installation..."
+docker --version
+echo "Verifying Docker Compose installation..."
+docker-compose --version
+
+# Finish up
+echo "Docker and Docker Compose have been installed successfully!"
+echo "Please log out and log back in to apply Docker group changes, or run 'newgrp docker' in this terminal."
